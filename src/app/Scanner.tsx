@@ -9,10 +9,15 @@ type Student = Record<string, unknown> & {
     college_name?: string;
     college_code?: string;
     program_name?: string;
+    discipline?: string;
+    program_level?: string;
+    month_of_exam?: string;
     semester?: string;
     academic_year?: string;
     barcode_placed?: boolean;
     courses?: Array<{ course_name?: string; exam_date?: string; centre_code?: string }>;
+    exam_centres?: Array<{ centre_name?: string; code?: string }>;
+    source_page_range?: number[];
 };
 
 type LookupResponse = {
@@ -102,7 +107,7 @@ export default function Scanner() {
                 <header className="scanner-header">
                     <div className="brand-mark">PX</div>
                     <div>
-                        <p className="eyebrow">PDF Processor</p>
+                        <p className="eyebrow">Mongo lookup</p>
                         <h1>Barcode lookup</h1>
                     </div>
                     <span className={`connection-dot ${scannerReady ? "is-live" : ""}`} title={scannerReady ? "Camera active" : "Camera inactive"} />
@@ -129,19 +134,23 @@ export default function Scanner() {
                     <section className={`record-panel ${student ? "has-record" : ""}`}>
                         <div className="panel-label"><span>02</span> Student record</div>
                         {!student ? (
-                            <div className="empty-record"><div className="empty-number">02</div><h2>Scan a barcode<br />to reveal the record</h2><p>Extracted data is fetched securely from the processor database after a successful scan.</p></div>
+                            <div className="empty-record"><div className="empty-number">02</div><h2>Scan a barcode<br />to reveal the record</h2><p>The matching student record is fetched from MongoDB using the scanned UUCMS value.</p></div>
                         ) : (
                             <div className="record-content">
                                 <div className="record-topline"><span className="found-badge">FOUND</span><span className="record-file">{result.filename}</span></div>
                                 <h2>{student.student_name || "Unnamed student"}</h2>
                                 <p className="registration">{student.uucms || barcode}</p>
                                 <div className="details-grid">
+                                    <Detail label="Academic year" value={student.academic_year} />
+                                    <Detail label="Month of exam" value={student.month_of_exam} />
                                     <Detail label="College" value={student.college_name} />
                                     <Detail label="College code" value={student.college_code} />
+                                    <Detail label="Program level" value={student.program_level} />
                                     <Detail label="Program" value={student.program_name} />
+                                    <Detail label="Discipline" value={student.discipline} />
                                     <Detail label="Semester" value={student.semester} />
-                                    <Detail label="Academic year" value={student.academic_year} />
                                     <Detail label="Barcode" value={student.barcode_placed ? "Placed" : "Not placed"} />
+                                    <Detail label="Source page" value={student.source_page_range ? student.source_page_range.join("-") : undefined} />
                                 </div>
                                 {student.courses && student.courses.length > 0 && <div className="courses"><h3>Courses <span>{student.courses.length}</span></h3>{student.courses.map((course, index) => <div className="course-row" key={`${course.course_name}-${index}`}><b>{String(index + 1).padStart(2, "0")}</b><span>{course.course_name || "Course"}</span><small>{course.exam_date || ""}</small></div>)}</div>}
                                 <button type="button" className="reset-button" onClick={reset}>Scan another ticket <span>↗</span></button>
@@ -149,7 +158,7 @@ export default function Scanner() {
                         )}
                     </section>
                 </div>
-                <footer className="scanner-footer"><span>LIVE DATABASE LOOKUP</span><span>Next.js server route</span></footer>
+                <footer className="scanner-footer"><span>LIVE DATABASE LOOKUP</span><span>MongoDB · student.uucms</span></footer>
             </section>
         </main>
     );
