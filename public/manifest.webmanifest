@@ -1,0 +1,11 @@
+{
+    "name": "Barcode Scanner PWA",
+    "short_name": "Barcode Scan",
+    "description": "Scan a barcode and fetch the matching MongoDB record instantly.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#111510",
+    "theme_color": "#deef4f",
+    "orientation": "portrait-primary",
+    "icons": []
+}
