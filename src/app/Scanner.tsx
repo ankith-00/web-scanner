@@ -3,8 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { Html5Qrcode } from "html5-qrcode";
 
-const API_URL = process.env.NEXT_PUBLIC_WORKER_URL || "http://localhost:8000";
-
 type Student = Record<string, unknown> & {
     uucms?: string;
     student_name?: string;
@@ -78,7 +76,7 @@ export default function Scanner() {
         setResult(null);
         setMessage("Looking up student record...");
         try {
-            const response = await fetch(`${API_URL}/lookup/${encodeURIComponent(normalized)}`);
+            const response = await fetch(`/api/lookup/${encodeURIComponent(normalized)}`);
             if (response.status === 404) throw new Error("No student record found for this barcode.");
             if (!response.ok) throw new Error("The API could not complete the lookup.");
             setResult((await response.json()) as LookupResponse);
@@ -151,7 +149,7 @@ export default function Scanner() {
                         )}
                     </section>
                 </div>
-                <footer className="scanner-footer"><span>LIVE DATABASE LOOKUP</span><span>API · {API_URL.replace(/^https?:\/\//, "")}</span></footer>
+                <footer className="scanner-footer"><span>LIVE DATABASE LOOKUP</span><span>Next.js server route</span></footer>
             </section>
         </main>
     );
