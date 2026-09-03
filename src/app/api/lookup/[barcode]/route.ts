@@ -27,12 +27,7 @@ export async function GET(
         const collection = database.collection(collectionName);
 
         const record = await collection.findOne({
-            $or: [
-                { barcode: normalized },
-                { uucms: normalized },
-                { "student.uucms": normalized },
-                { "student.barcode": normalized },
-            ],
+            "student.uucms": normalized,
         });
 
         await client.close();
@@ -41,10 +36,7 @@ export async function GET(
             return NextResponse.json({ error: "Not found" }, { status: 404 });
         }
 
-        const student =
-            record.student ??
-            record.data?.student ??
-            record;
+        const student = record.student ?? record.data?.student ?? record;
 
         return NextResponse.json({
             job_id: record.job_id ?? record._id?.toString?.() ?? "",
